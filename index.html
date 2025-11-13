@@ -157,9 +157,54 @@
       }
 
       #welcomePage {
+        display: block !important;
         justify-content: flex-start; /* content starts at top */
-        padding-top: 12vh; /* keep spacing */
+        padding-top: 24vh; /* keep spacing */
         padding-bottom: 12vh;
+      }
+
+      /* Couple row container */
+      .couple-row {
+        display: flex;
+        justify-content: center;
+        align-items: center; /* same vertical alignment */
+        gap: 30px;
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
+        padding-top: 20px;
+        margin-bottom: 30px;
+      }
+
+      /* Groom + Bride blocks */
+      .couple-row .person {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      /* Circle images */
+      .couple-row img {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ffd6e3;
+      }
+
+      /* Labels */
+      .couple-row p {
+        margin-top: 8px;
+        color: #e91e63;
+        font-weight: 600;
+      }
+
+      /* Heart in the center */
+      .heart-mid {
+        font-size: 20px;
+        color: #e91e63;
+        transform: translateY(-10px);
       }
 
       /* ---------------------------------------
@@ -214,25 +259,53 @@
         font-size: 30px;
         margin: -10px 0 0 0;
       }
+
+      .curious-text {
+        margin-top: 15px;
+        font-size: 16px;
+        color: #e91e63;
+      }
+
+      .fake-no {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 17px;
+        color: #ff4081;
+        font-weight: 600;
+      }
+
+      .fake-no:hover {
+        transform: scale(1.05);
+      }
     </style>
   </head>
   <body>
     <!-- PAGE 1 -->
     <div id="namePage" class="page">
-      <h2>Cốc cốc cốc! Ai đó nè?</h2>
-      <input id="guestName" placeholder="Nhập tên của bạn..." />
+      <h2>CỐC CỐC CỐC</h2>
+      <h2>Ai gọi đó?</h2>
+      <input id="guestName" placeholder="Tôi là ..." />
       <button onclick="goTo('welcomePage')">Tiếp tục</button>
     </div>
 
     <!-- PAGE 2 -->
     <div id="welcomePage" class="page hidden">
-      <h2>Chào mừng đến với ngày vui</h2>
-      <p>Chú rể: Anh Tài</p>
-      <img id="groomImg" />
-      <div class="heart-divider">💗</div>
-      <p>Cô dâu: Tuyết Nhi</p>
-      <img id="brideImg" />
-      <img id="brideImg" />
+      <h2>Chào Mừng Bạn Đến Với</h2>
+      <h2>Những Khoảnh Khắc Đáng Nhớ của</h2>
+      <div class="couple-row">
+        <div class="person">
+          <img id="groomImg" />
+          <p>Chú rể: Anh Tài</p>
+        </div>
+
+        <div class="person">
+          <img id="brideImg" />
+          <p>Cô dâu: Tuyết Nhi</p>
+        </div>
+      </div>
       <button onclick="goTo('videoPage')">Tiếp tục</button>
     </div>
 
@@ -267,12 +340,29 @@
     <div id="rsvpYes" class="page hidden">
       <h2>Yêu bạn nhiều!</h2>
       <p>Tụi mình rất mong bạn đến nha ❤️</p>
+
+      <p class="curious-text">Bạn có tò mò nếu chọn NO sẽ như thế nào không?</p>
+
+      <div class="fake-no" onclick="triggerFakeNo()">
+        <span>👉</span> <span class="fake-no-text">Bấm thử đi</span>
+      </div>
     </div>
 
     <div id="rsvpNo" class="page hidden">
       <h2>Òaaa...</h2>
-      <p>Bấm YES đi màaaa 😭</p>
-      <button onclick="goTo('rsvpThanks')">YES 😭</button>
+
+      <p>Ahihi, một chút trò chơi nhỏ để vui vẻ nè.</p>
+      <p>Cố gắng sắp xếp đến chung vui với tụi mình nhé.!</p>
+      <p>Xin cảm ơn!</p>
+      <p>Bạn thật là dễ thương!</p>
+
+      <button id="noRunBtn" onclick="noClicked()">NO 😭</button>
+      <p
+        id="noMessage"
+        style="display: none; font-size: 18px; color: #e91e63; margin-top: 10px"
+      >
+        Phải bấm "YES" mới được 😆
+      </p>
     </div>
 
     <div id="rsvpThanks" class="page hidden">
@@ -297,6 +387,20 @@
         target.classList.remove("hidden");
 
         target.scrollTop = 0; // <-- ensure the shown page starts at top
+
+        // Reset NO logic when entering rsvpNo page
+        if (id === "rsvpNo") {
+          noRunCount = 0;
+          const btn = document.getElementById("noRunBtn");
+          const msg = document.getElementById("noMessage");
+          btn.style.transform = "none";
+          btn.style.display = "inline-block";
+          msg.style.display = "none";
+        }
+
+        if (id === "albumPage") {
+          loadAlbum("Nhà Thờ");
+        }
       }
 
       /* ----------------------------------------
@@ -403,6 +507,52 @@
         } catch (error) {
           console.error("Drive API error:", error);
           container.innerHTML = "<p>Lỗi khi tải ảnh.</p>";
+        }
+      }
+
+      function triggerFakeNo() {
+        // Go to the NO page
+        goTo("rsvpNo");
+
+        // Simulate the NO button running 3 times (same behavior as the first NO)
+        const noButton = document.querySelector("#rsvpNo button");
+
+        let count = 0;
+
+        function runAway() {
+          if (count >= 3) return;
+
+          // random movement (same effect as first NO)
+          const x = Math.random() * 140 - 70;
+          const y = Math.random() * 100 - 50;
+
+          noButton.style.transform = `translate(${x}px, ${y}px)`;
+          count++;
+
+          // do again in 600ms
+          setTimeout(runAway, 600);
+        }
+
+        runAway(); // start animation
+      }
+
+      let noRunCount = 0;
+
+      function noClicked() {
+        const btn = document.getElementById("noRunBtn");
+        const msg = document.getElementById("noMessage");
+
+        if (noRunCount < 3) {
+          // Make NO button run away
+          const x = Math.random() * 150 - 75;
+          const y = Math.random() * 120 - 60;
+          btn.style.transform = `translate(${x}px, ${y}px)`;
+
+          noRunCount++;
+        } else {
+          // After 3 attempts → hide button and show message
+          btn.style.display = "none";
+          msg.style.display = "block";
         }
       }
     </script>
