@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Love Ticket – Tài & Nhi</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ---------------------------------------
+     BASE RESET + GLOBAL
+  --------------------------------------- */
+      :root {
+        --pink: #e91e63;
+        --pink-light: #fff0f5;
+        --btn-pink: #ff77a9;
+
+        --radius: 14px;
+        --page-pad: 16px;
+        --page-gap: 20px;
+        --max-width: 480px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Quicksand", sans-serif;
+        background: var(--pink-light);
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* ---------------------------------------
+     PAGE
+  --------------------------------------- */
+      .page {
+        width: 100%;
+        max-width: var(--max-width);
+        padding: var(--page-pad);
+
+        /* Center content vertically */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center; /* <-- CENTER CONTENT */
+
+        gap: var(--page-gap);
+
+        position: absolute;
+        inset: 0;
+
+        min-height: 100vh;
+        overflow-y: auto;
+
+        background: var(--pink-light);
+        transition: opacity 0.35s ease;
+        text-align: center;
+      }
+
+      .hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* ---------------------------------------
+     TYPOGRAPHY
+  --------------------------------------- */
+      h2 {
+        font-family: "Dancing Script", cursive;
+        font-size: clamp(26px, 7vw, 36px);
+        color: var(--pink);
+      }
+
+      p {
+        font-size: clamp(14px, 4vw, 18px);
+        color: #444;
+      }
+
+      /* ---------------------------------------
+     BUTTONS
+  --------------------------------------- */
+      button {
+        padding: 12px 22px;
+        background: var(--btn-pink);
+        color: white;
+        border-radius: 22px;
+        font-size: clamp(14px, 4vw, 17px);
+        border: none;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      button:active {
+        transform: scale(0.93);
+      }
+
+      /* ---------------------------------------
+     INPUTS
+  --------------------------------------- */
+      input {
+        padding: 12px;
+        font-size: clamp(14px, 4vw, 16px);
+        border-radius: var(--radius);
+        border: 1px solid #ddd;
+        width: 90%;
+        max-width: 330px;
+        text-align: center;
+      }
+
+      /* ---------------------------------------
+     IMAGES
+  --------------------------------------- */
+      img {
+        width: 100%;
+        max-width: 320px;
+        border-radius: var(--radius);
+        object-fit: cover;
+      }
+
+      /* ---------------------------------------
+     CONCEPT BUTTONS
+  --------------------------------------- */
+      .concepts {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .concept {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        background: #ffd6e3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: clamp(11px, 3vw, 13px);
+        cursor: pointer;
+        padding: 10px;
+        transition: 0.2s ease;
+      }
+
+      .concept:hover {
+        transform: scale(1.05);
+      }
+
+      #welcomePage {
+        justify-content: flex-start; /* content starts at top */
+        padding-top: 12vh; /* keep spacing */
+        padding-bottom: 12vh;
+      }
+
+      /* ---------------------------------------
+     ALBUM GRID
+     - Mobile: 1 per row
+     - Tablet: 2 per row
+     - Desktop: 3 per row
+  --------------------------------------- */
+      #albumPage {
+        justify-content: flex-start; /* content starts at top */
+        padding-top: 12vh; /* keep spacing */
+        padding-bottom: 12vh;
+      }
+
+      .album-grid {
+        width: 100%;
+        max-width: 900px; /* keeps grid centered on wide screens */
+        margin: 0 auto; /* <-- CENTER THE GRID */
+        display: grid;
+        gap: 10px;
+        padding-bottom: 40px;
+        grid-template-columns: 1fr; /* mobile: 1 per row */
+        justify-items: center; /* <-- center each cell */
+      }
+
+      /* Tablet */
+      @media (min-width: 600px) {
+        .album-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* Desktop */
+      @media (min-width: 900px) {
+        .album-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      /* Ensure images don't stretch weirdly */
+      .album-grid img {
+        width: 100%;
+        aspect-ratio: 3/4;
+        border-radius: 14px;
+        object-fit: cover;
+      }
+
+      /* ---------------------------------------
+     HEART DIVIDER
+  --------------------------------------- */
+      .heart-divider {
+        font-size: 30px;
+        margin: -10px 0 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- PAGE 1 -->
+    <div id="namePage" class="page">
+      <h2>Cốc cốc cốc! Ai đó nè?</h2>
+      <input id="guestName" placeholder="Nhập tên của bạn..." />
+      <button onclick="goTo('welcomePage')">Tiếp tục</button>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div id="welcomePage" class="page hidden">
+      <h2>Chào mừng đến với ngày vui</h2>
+      <p>Chú rể: Anh Tài</p>
+      <img id="groomImg" />
+      <div class="heart-divider">💗</div>
+      <p>Cô dâu: Tuyết Nhi</p>
+      <img id="brideImg" />
+      <img id="brideImg" />
+      <button onclick="goTo('videoPage')">Tiếp tục</button>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div id="videoPage" class="page hidden">
+      <h2>Video kỷ niệm 🎥</h2>
+      <iframe
+        width="360"
+        height="220"
+        src="https://drive.google.com/file/d/15-0Ezk9wrdoMYES7ZcdPCIMbilMxqhaw/preview"
+        allow="autoplay"
+      ></iframe>
+      <button onclick="goTo('albumPage')">Xem Album</button>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div id="albumPage" class="page hidden">
+      <h2>Album cưới 💕</h2>
+      <div class="concepts" id="conceptList"></div>
+      <div class="album-grid" id="albumContainer"></div>
+      <button onclick="goTo('rsvpPage')">Tiếp tục</button>
+    </div>
+
+    <!-- RSVP -->
+    <div id="rsvpPage" class="page hidden">
+      <h2>03/01/2026 – Ngày vui của tụi mình 💒</h2>
+      <p>Bạn có đến chung vui với tụi mình không?</p>
+      <button onclick="goTo('rsvpYes')">YES</button>
+      <button onclick="goTo('rsvpNo')">NO</button>
+    </div>
+
+    <div id="rsvpYes" class="page hidden">
+      <h2>Yêu bạn nhiều!</h2>
+      <p>Tụi mình rất mong bạn đến nha ❤️</p>
+    </div>
+
+    <div id="rsvpNo" class="page hidden">
+      <h2>Òaaa...</h2>
+      <p>Bấm YES đi màaaa 😭</p>
+      <button onclick="goTo('rsvpThanks')">YES 😭</button>
+    </div>
+
+    <div id="rsvpThanks" class="page hidden">
+      <h2>Cảm ơn bạn!</h2>
+      <p>Thật dễ thương khi bạn xem tới cuối 🥰</p>
+    </div>
+
+    <!-- GOOGLE API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <script>
+      /* ----------------------------------------
+      PAGE SWITCH
+---------------------------------------- */
+      function goTo(id) {
+        document.querySelectorAll(".page").forEach((p) => {
+          p.classList.add("hidden");
+          p.scrollTop = 0; // <-- reset scroll each time
+        });
+
+        const target = document.getElementById(id);
+        target.classList.remove("hidden");
+
+        target.scrollTop = 0; // <-- ensure the shown page starts at top
+      }
+
+      /* ----------------------------------------
+      CONFIG — 🔥 REPLACE THESE
+---------------------------------------- */
+      const CONFIG = {
+        apiKey: "AIzaSyAw1gQSH2ldNO0mKUtPLMebZ9c7cULkl70",
+
+        groomImg: "1hnxiwDhmo3l_LIx4PeEB_UPFQPeaEFaU",
+        brideImg: "1WEWkAx0TOBAGc-HuG_eBhe1BNoYuB40L",
+
+        folders: {
+          "Nhà Thờ": "1RTScn1xIh4VFN15r-UQ3deT3jr6wV1Fy",
+          "Đồ Hỷ": "1Q-W-ZlBsWMjgGtlrWicrj3I6PghJuEBe",
+          "Sườn Xám": "19xeTVfUbV0sPVgUfu31-Rwwym-SXRvLC",
+          Biển: "1ZUzPS2XyLy65f1V-EsuIWwfng7z7FYJV",
+        },
+      };
+
+      /* ----------------------------------------
+      START GOOGLE DRIVE API (NO LOGIN)
+---------------------------------------- */
+      gapi.load("client", initGapi);
+
+      async function initGapi() {
+        console.log("gapi loaded");
+
+        // Step 1: Initialize base client
+        await gapi.client.init({
+          apiKey: CONFIG.apiKey,
+          discoveryDocs: [
+            "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+          ],
+        });
+
+        console.log("client initialized");
+
+        // Step 2: Load the actual Drive API
+        await gapi.client.load("drive", "v3");
+
+        console.log("drive api loaded");
+
+        // Step 3 (IMPORTANT): Now it's safe to call Drive API
+        window.driveReady = true;
+      }
+
+      /* ----------------------------------------
+      LOAD BRIDE & GROOM PHOTOS
+---------------------------------------- */
+      document.getElementById(
+        "groomImg"
+      ).src = `https://lh3.googleusercontent.com/d/${CONFIG.groomImg}`;
+
+      document.getElementById(
+        "brideImg"
+      ).src = `https://lh3.googleusercontent.com/d/${CONFIG.brideImg}`;
+
+      /* ----------------------------------------
+      LOAD CONCEPT BUTTONS
+---------------------------------------- */
+      const conceptList = document.getElementById("conceptList");
+      for (let name in CONFIG.folders) {
+        const div = document.createElement("div");
+        div.className = "concept";
+        div.innerText = name;
+        div.onclick = () => loadAlbum(name);
+        conceptList.appendChild(div);
+      }
+
+      /* ----------------------------------------
+      AUTO-LOAD ALBUM FROM PUBLIC FOLDER
+---------------------------------------- */
+      async function loadAlbum(conceptName) {
+        const folderId = CONFIG.folders[conceptName];
+        const container = document.getElementById("albumContainer");
+        container.innerHTML = "Đang tải ảnh...";
+
+        const query = `'${folderId}' in parents and mimeType contains 'image/' and trashed = false`;
+        const encodedQuery = encodeURIComponent(query);
+
+        const url = `https://www.googleapis.com/drive/v3/files?q=${encodedQuery}&fields=files(id,name)&key=${CONFIG.apiKey}`;
+
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+
+          const files = data.files || [];
+
+          container.innerHTML = "";
+
+          if (files.length === 0) {
+            container.innerHTML =
+              "<p>Chưa có ảnh trong thư mục này hoặc API chưa fetch được ảnh.</p>";
+            return;
+          }
+
+          files.forEach((file) => {
+            const img = document.createElement("img");
+            img.src = `https://lh3.googleusercontent.com/d/${file.id}`;
+            img.loading = "lazy";
+            img.onclick = () => openLightbox(src);
+            container.appendChild(img);
+          });
+        } catch (error) {
+          console.error("Drive API error:", error);
+          container.innerHTML = "<p>Lỗi khi tải ảnh.</p>";
+        }
+      }
+    </script>
+  </body>
+</html>
