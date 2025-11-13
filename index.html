@@ -349,6 +349,26 @@
     </div>
 
     <div id="rsvpNo" class="page hidden">
+      <h2>NO hả 😳</h2>
+
+      <!-- This will show after NO runs away 3 times -->
+      <p
+        id="noFinalMessage"
+        style="display: none; font-size: 18px; color: #e91e63"
+      >
+        Phải bấm "YES" mới được 😆
+      </p>
+
+      <!-- The new YES button (hidden until needed) -->
+      <button id="noToYesBtn" style="display: none" onclick="gotoNoYes()">
+        YES 😆
+      </button>
+
+      <!-- The running NO button -->
+      <button id="noRunBtn" onclick="noClicked()">NO 😭</button>
+    </div>
+
+    <div id="noResultPage" class="page hidden">
       <h2>Òaaa...</h2>
 
       <p>Ahihi, một chút trò chơi nhỏ để vui vẻ nè.</p>
@@ -356,13 +376,7 @@
       <p>Xin cảm ơn!</p>
       <p>Bạn thật là dễ thương!</p>
 
-      <button id="noRunBtn" onclick="noClicked()">NO 😭</button>
-      <p
-        id="noMessage"
-        style="display: none; font-size: 18px; color: #e91e63; margin-top: 10px"
-      >
-        Phải bấm "YES" mới được 😆
-      </p>
+      <button onclick="goTo('rsvpYes')">Đi tiếp ❤️</button>
     </div>
 
     <div id="rsvpThanks" class="page hidden">
@@ -391,11 +405,16 @@
         // Reset NO logic when entering rsvpNo page
         if (id === "rsvpNo") {
           noRunCount = 0;
+
           const btn = document.getElementById("noRunBtn");
-          const msg = document.getElementById("noMessage");
+          const msg = document.getElementById("noFinalMessage");
+          const yesBtn = document.getElementById("noToYesBtn");
+
           btn.style.transform = "none";
           btn.style.display = "inline-block";
+
           msg.style.display = "none";
+          yesBtn.style.display = "none";
         }
 
         if (id === "albumPage") {
@@ -540,20 +559,26 @@
 
       function noClicked() {
         const btn = document.getElementById("noRunBtn");
-        const msg = document.getElementById("noMessage");
+        const msg = document.getElementById("noFinalMessage");
+        const yesBtn = document.getElementById("noToYesBtn");
 
         if (noRunCount < 3) {
-          // Make NO button run away
+          // Run away NO button
           const x = Math.random() * 150 - 75;
           const y = Math.random() * 120 - 60;
           btn.style.transform = `translate(${x}px, ${y}px)`;
 
           noRunCount++;
         } else {
-          // After 3 attempts → hide button and show message
+          // After 3 runs → show message + YES button
           btn.style.display = "none";
           msg.style.display = "block";
+          yesBtn.style.display = "inline-block";
         }
+      }
+
+      function gotoNoYes() {
+        goTo("noResultPage");
       }
     </script>
   </body>
