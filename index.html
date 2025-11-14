@@ -288,6 +288,104 @@
       .fake-no:hover {
         transform: scale(1.05);
       }
+
+      /* Twist popup box */
+      .twist-box {
+        background: white;
+        padding: 20px;
+        border-radius: 14px;
+        max-width: 90%;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        animation: popIn 0.4s ease-out;
+      }
+
+      .twist-box p {
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+
+      /* Pop animation */
+      @keyframes popIn {
+        0% {
+          transform: scale(0.6);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Simple fireworks */
+      /* Fireworks overlay fills the page */
+      #fireworks {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      /* Central flash of a firework */
+      .flash {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: white;
+        opacity: 0;
+        animation: flash-pop 350ms ease-out forwards;
+      }
+
+      @keyframes flash-pop {
+        0% {
+          transform: scale(0.3);
+          opacity: 1;
+          box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.9);
+        }
+        100% {
+          transform: scale(2.8);
+          opacity: 0;
+        }
+      }
+
+      /* Individual sparks */
+      .spark {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        opacity: 0;
+        animation: spark-move 900ms ease-out forwards,
+          spark-flicker 300ms ease-in-out infinite;
+        box-shadow: 0 0 6px 3px rgba(255, 255, 255, 0.6);
+      }
+
+      /* Move outwards using CSS variables --dx / --dy */
+      @keyframes spark-move {
+        0% {
+          transform: translate(0, 0) scale(0.4);
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--dx), var(--dy)) scale(0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes spark-flicker {
+        0% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.4;
+        }
+      }
     </style>
   </head>
   <body>
@@ -390,6 +488,21 @@
     <div id="rsvpThanks" class="page hidden">
       <h2>Cảm ơn bạn!</h2>
       <p>Thật dễ thương khi bạn xem tới cuối 🥰</p>
+    </div>
+
+    <div id="twistPage" class="page hidden">
+      <div class="twist-box">
+        <h2>CHÚC MỪNG BẠN ĐÃ NHẬN ĐƯỢC</h2>
+        <h2>MỘT NỤ CƯỜI 😃</h2>
+        <p>1 nụ cười bằng 10 thang thuốc bổ đó! 😉</p>
+      </div>
+
+      <!-- Fireworks container -->
+      <div id="fireworks"></div>
+
+      <p style="margin-top: 20px; font-size: 14px; color: #e91e63">
+        Chạm vào màn hình để tiếp tục
+      </p>
     </div>
 
     <!-- GOOGLE API -->
@@ -528,7 +641,6 @@
             const img = document.createElement("img");
             img.src = `https://lh3.googleusercontent.com/d/${file.id}`;
             img.loading = "lazy";
-            img.onclick = () => openLightbox(src);
             container.appendChild(img);
           });
         } catch (error) {
@@ -586,8 +698,70 @@
       }
 
       function gotoNoYes() {
-        goTo("noResultPage");
+        goTo("twistPage");
+        launchFireworks();
       }
+
+      function launchFireworks() {
+        const container = document.getElementById("fireworks");
+        if (!container) return;
+
+        container.innerHTML = ""; // clear previous
+
+        // Launch 3 fireworks in sequence
+        for (let i = 0; i < 100; i++) {
+          setTimeout(() => createFirework(container), i * 450);
+        }
+      }
+
+      function createFirework(container) {
+        const rect = container.getBoundingClientRect();
+
+        // Pick a point roughly in the upper-middle area of the page
+        const cx = rect.width * (0.3 + Math.random() * 0.4); // 30–70% width
+        const cy = rect.height * (0.2 + Math.random() * 0.3); // 20–50% height
+
+        // Create central flash
+        const flash = document.createElement("div");
+        flash.className = "flash";
+        flash.style.left = cx + "px";
+        flash.style.top = cy + "px";
+        container.appendChild(flash);
+        setTimeout(() => flash.remove(), 400);
+
+        // Create sparks
+        const sparkCount = 12 + Math.floor(Math.random() * 8);
+        const colors = ["#ff4d6d", "#ff9f1c", "#ffe066", "#70d6ff", "#c77dff"];
+
+        for (let i = 0; i < sparkCount; i++) {
+          const spark = document.createElement("div");
+          spark.className = "spark";
+
+          const angle = Math.random() * 2 * Math.PI;
+          const distance = 70 + Math.random() * 80; // explosion radius
+
+          const dx = Math.cos(angle) * distance;
+          const dy = Math.sin(angle) * distance;
+
+          spark.style.setProperty("--dx", dx + "px");
+          spark.style.setProperty("--dy", dy + "px");
+
+          spark.style.left = cx + "px";
+          spark.style.top = cy + "px";
+
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          spark.style.background = color;
+          spark.style.boxShadow = `0 0 8px 4px ${color}77`;
+
+          container.appendChild(spark);
+
+          setTimeout(() => spark.remove(), 950);
+        }
+      }
+
+      document.getElementById("twistPage").addEventListener("click", () => {
+        goTo("noResultPage");
+      });
     </script>
   </body>
 </html>
