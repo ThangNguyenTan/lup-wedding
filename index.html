@@ -67,6 +67,10 @@
         text-align: center;
       }
 
+      .page.no-pad {
+        padding: 0;
+      }
+
       .hidden {
         opacity: 0;
         pointer-events: none;
@@ -416,12 +420,12 @@
     </div>
 
     <!-- PAGE 3 -->
-    <div id="videoPage" class="page hidden">
+    <div id="videoPage" class="page no-pad hidden">
       <h2>Video kỷ niệm 🎥</h2>
       <iframe
+        id="videoFrame"
         width="360"
         height="220"
-        src="https://drive.google.com/file/d/15-0Ezk9wrdoMYES7ZcdPCIMbilMxqhaw/preview"
         allow="autoplay"
       ></iframe>
       <button onclick="goTo('albumPage')">Xem Album</button>
@@ -541,6 +545,10 @@
         if (id === "albumPage") {
           loadAlbum("Nhà Thờ");
         }
+
+        if (id === "welcomePage") {
+          loadVideo();
+        }
       }
 
       /* ----------------------------------------
@@ -551,6 +559,8 @@
 
         groomImg: "1sB3Yry1z2po-ZoUUypm06MWRlG6UHjiU",
         brideImg: "14WlBe-yxXgL67M2uOsfr7Paho3Hr2PLq",
+
+        videoFolder: "1yJCSNl2iyKnVvPU2KBCTlZZ4HvjzGuy0",
 
         folders: {
           "Nhà Thờ": "1RTScn1xIh4VFN15r-UQ3deT3jr6wV1Fy",
@@ -756,6 +766,36 @@
           container.appendChild(spark);
 
           setTimeout(() => spark.remove(), 950);
+        }
+      }
+
+      async function loadVideo() {
+        const folderId = CONFIG.videoFolder;
+
+        const query = `'${folderId}' in parents and mimeType contains 'video/' and trashed = false`;
+        const encodedQuery = encodeURIComponent(query);
+
+        const url = `https://www.googleapis.com/drive/v3/files?q=${encodedQuery}&fields=files(id,name,mimeType)&key=${CONFIG.apiKey}`;
+
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          const files = data.files || [];
+
+          if (files.length === 0) {
+            document.getElementById("videoFrame").src = "";
+            console.log("No video found in folder");
+            return;
+          }
+
+          // Pick the first video (or change to newest if needed)
+          const firstVideo = files[0];
+
+          document.getElementById(
+            "videoFrame"
+          ).src = `https://drive.google.com/file/d/${firstVideo.id}/preview`;
+        } catch (err) {
+          console.error("Video load error:", err);
         }
       }
 
