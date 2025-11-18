@@ -436,7 +436,7 @@
       <h2>Album cưới 💕</h2>
       <div class="concepts" id="conceptList"></div>
       <div class="album-grid" id="albumContainer"></div>
-      <button onclick="goTo('rsvpPage')">Tiếp tục</button>
+      <button onclick="nextAlbumStep()">Tiếp tục</button>
     </div>
 
     <!-- RSVP -->
@@ -543,7 +543,8 @@
         }
 
         if (id === "albumPage") {
-          loadAlbum("Nhà Thờ");
+          currentConceptIndex = 0;
+          loadAlbum(conceptNames[currentConceptIndex]);
         }
 
         if (id === "welcomePage") {
@@ -569,6 +570,9 @@
           Biển: "1ZUzPS2XyLy65f1V-EsuIWwfng7z7FYJV",
         },
       };
+
+      let currentConceptIndex = 0;
+      const conceptNames = Object.keys(CONFIG.folders);
 
       /* ----------------------------------------
       START GOOGLE DRIVE API (NO LOGIN)
@@ -802,6 +806,17 @@
       document.getElementById("twistPage").addEventListener("click", () => {
         goTo("noResultPage");
       });
+
+      function nextAlbumStep() {
+        // If user is NOT at the final concept → go to next concept
+        if (currentConceptIndex < conceptNames.length - 1) {
+          currentConceptIndex++;
+          loadAlbum(conceptNames[currentConceptIndex]);
+        } else {
+          // If user already saw the last concept → go to next page
+          goTo("rsvpPage");
+        }
+      }
     </script>
   </body>
 </html>
